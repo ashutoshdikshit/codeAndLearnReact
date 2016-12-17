@@ -13,10 +13,31 @@
     <script type="text/babel">
         //Nav Bar component
         var NavBar = React.createClass({
+            propTypes: {
+                brand: React.PropTypes.string.isRequired
+            },
+            getDefaultProps: function(){
+                return {
+                    brand: 'React Bootstrap App',
+                    color: 'light'
+                }
+            },
             render: function(){
+                if(this.props.color == 'dark'){
+                    var navClass = 'navbar navbar-inverse';
+                }else {
+                    var navClass = 'navbar navbar-default';
+                }
+                var aboutActive = '';
+                var homeActive = '';
+                if(this.props.page == 'home') {
+                    homeActive = 'active';
+                } else if(this.props.page == 'about') {
+                    aboutActive = 'active'
+                }
                 return(
                     <div>
-                        <nav className="navbar navbar-default">
+                        <nav className={navClass}>
                             <div className="container-fluid">
                                 <div className="navbar-header">
                                     <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -25,26 +46,13 @@
                                         <span className="icon-bar"></span>
                                         <span className="icon-bar"></span>
                                     </button>
-                                    <a className="navbar-brand" href="#">Brand</a>
+                                    <a className="navbar-brand" href="#">{this.props.brand}</a>
                                 </div>
 
                                 <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                                     <ul className="nav navbar-nav">
-                                        <li className="active"><a href="#">Home <span className="sr-only">(current)</span></a></li>
-                                        <li><a href="#">About</a></li>
-                                    </ul>
-                                    <ul className="nav navbar-nav navbar-right">
-                                        <li><a href="#">Link</a></li>
-                                        <li className="dropdown">
-                                            <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span className="caret"></span></a>
-                                            <ul className="dropdown-menu">
-                                                <li><a href="#">Action</a></li>
-                                                <li><a href="#">Another action</a></li>
-                                                <li><a href="#">Something else here</a></li>
-                                                <li role="separator" className="divider"></li>
-                                                <li><a href="#">Separated link</a></li>
-                                            </ul>
-                                        </li>
+                                        <li className={homeActive}><a href="#" onClick={this.props.handleHomeClick}>Home</a></li>
+                                        <li className={aboutActive}><a href="#" onClick={this.props.handleAboutClick}>About</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -56,13 +64,25 @@
 
         //Jumbotron Cmp
         var JumboTron = React.createClass({
+            propTypes: {
+                heading: React.PropTypes.string,
+                text: React.PropTypes.string,
+                link: React.PropTypes.string,
+            },
+            getDefaultProps: function(){
+                return {
+                    heading: 'Welcome',
+                    text: 'Welcome to React Bootstrap Website',
+                    link: 'https://facebook.github.io/react/'
+                }
+            },
             render: function() {
                 return(
                     <div className="jumbotron">
                         <div className="container">
-                            <h1>Hello, world!</h1>
-                            <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-                            <p><a className="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+                            <h1>{this.props.heading}</h1>
+                            <p>{this.props.text}</p>
+                            <p><a className="btn btn-primary btn-lg" href={this.props.link} role="button">Learn more &raquo;</a></p>
                         </div>
                     </div>
 
@@ -85,12 +105,18 @@
 
         //Footer cmp
         var Footer = React.createClass({
+            getDefaultProps: function(){
+                return {
+                    website: ' React App',
+                    copyYear: '2016'
+                }
+            },
             render: function() {
                 return(
                     <div className="container">
                         <hr/>
                         <footer>
-                            <p>&copy; 2016 React App, Inc.</p>
+                            <p>&copy; {this.props.copyYear} {this.props.website}</p>
                         </footer>
                     </div>
 
@@ -100,11 +126,35 @@
 
         //Main App Cmp
         var App = React.createClass({
+            getInitialState :  function() {
+                return {
+                    page: 'home'
+                }
+            },
+            handleHomeClick : function(){
+                this.setState({
+                    page: 'home'
+                })
+            },
+            handleAboutClick : function(){
+                this.setState({
+                    page: 'about'
+                })
+            },
             render: function() {
+                if(this.state.page=="home"){
+                    var jumbotron = <JumboTron />
+                }else if (this.state.page = "about") {
+                    var jumbotron = '';
+                }
                 return(
                     <div>
-                        <NavBar/>
-                        <JumboTron/>
+                        <NavBar
+                         color="light"
+                         page={this.state.page}
+                         handleHomeClick = {this.handleHomeClick}
+                         handleAboutClick = {this.handleAboutClick}/>
+                        {jumbotron}
                         <PageHome/>
                         <Footer/>
                     </div>
